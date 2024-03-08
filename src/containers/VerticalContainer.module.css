@@ -1,0 +1,26 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: lightgrey;
+    border-radius: .5vw;
+}
+
+.title {
+    margin: .4vw;
+    font-weight: bold;
+    font-size: 1.5vw;
+}
+
+.elms {
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.elms::-webkit-scrollbar {
+    display: none;
+}
+
+.elm {
+    margin: .5vw;
+}

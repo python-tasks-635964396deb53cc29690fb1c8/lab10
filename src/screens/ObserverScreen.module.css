@@ -1,0 +1,15 @@
+.screen {
+    display: flex;
+}
+
+.backlogMenu {
+    margin: 0 5%;
+    width: 20%;
+}
+
+.backlogButtons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 10%;
+}

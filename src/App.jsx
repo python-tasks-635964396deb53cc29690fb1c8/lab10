@@ -1,17 +1,19 @@
+import cs from './App.module.css'
+import ObserverScreen from "./screens/ObserverScreen";
 import LogScreen from "./screens/LogScreen";
-import {useEffect, useState} from 'react'
+import {useState} from "react";
 
 const App = () => {
-    const [ messages, setMessages ] = useState([]);
-
-    useEffect(() => {
-        for (let i = 0; i < 100; i++) {
-            setMessages(prev => [...prev, `message: ${i}`]);
-        }
-    }, []);
+    const [ messages, setMessages ] = useState(['Init messages area.']);
 
     return (
-        <LogScreen msgList={messages} />
+        <div className={cs.app}>
+            <ObserverScreen className={cs.observer} />
+            <LogScreen
+                msgList={messages}
+                width="20svw"
+                height="100svh" />
+        </div>
     );
 }
 

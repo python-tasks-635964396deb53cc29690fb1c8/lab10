@@ -1,0 +1,8 @@
+.app {
+    display: flex;
+}
+
+.observer {
+    width: 80svw;
+    height: 100svh;
+}

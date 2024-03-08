@@ -1,0 +1,8 @@
+.container {
+    display: flex;
+    overflow-x: scroll;
+}
+
+.element {
+    margin: .4vw;
+}

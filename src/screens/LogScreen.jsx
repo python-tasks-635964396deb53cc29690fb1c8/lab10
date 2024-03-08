@@ -1,8 +1,8 @@
 import cs from './LogScreen.module.css'
 
-const LogScreen = ({msgList}) => {
+const LogScreen = ({msgList, width, height}) => {
     return (
-        <div>
+        <div style={{width: width, height: height}} className={cs.container}>
             { msgList.map((msg, i) => <span key={i} className={cs.message}>{msg}</span>) }
         </div>
     );

@@ -1,0 +1,23 @@
+.card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: gray;
+    border-radius: .7vw;
+    width: 12vw;
+    height: 6vw;
+    cursor: grab;
+    box-shadow: 0 0 .35vw black;
+}
+
+.title {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2vw;
+    width: 95%;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    user-select: none;
+}
