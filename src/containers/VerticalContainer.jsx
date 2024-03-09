@@ -1,8 +1,9 @@
 import cs from './VerticalContainer.module.css'
 
-const VerticalContainer = ({containerName, elms, height, width, onDrop, className}) => {
+const VerticalContainer = ({containerName, elms, height, width, onDrop, className, containerUUID}) => {
     return (
         <div
+            data-container-uuid={containerUUID}
             onDragOver={e => e.preventDefault()}
             onDrop={onDrop}
             style={{height: height, width: width}}

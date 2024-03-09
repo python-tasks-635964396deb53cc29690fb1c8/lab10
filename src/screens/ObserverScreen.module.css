@@ -13,3 +13,8 @@
     align-items: center;
     height: 10%;
 }
+
+.backlogButtons button {
+    font-size: 1.2vw;
+    cursor: pointer;
+}
