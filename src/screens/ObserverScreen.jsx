@@ -4,6 +4,7 @@ import VerticalContainer from "../containers/VerticalContainer";
 import {useState} from "react";
 import CardWithTitle from "../containers/CardWithTitle";
 import {Card, Subject} from '../utils/helpers';
+import {v4 as uuidV4} from "uuid";
 
 let observablesStorage = [];
 let observersStorage = [];
@@ -31,7 +32,7 @@ const ObserverScreen = ({log, className}) => {
     const [observers, setObservers] = useState([]);
 
     function createObserver() {
-        const card = new Card(crypto.randomUUID(), `Observer ${observersStorage.length + 1}`);
+        const card = new Card(uuidV4(), `Observer ${observersStorage.length + 1}`);
         card.setCallback(() => animCard(card));
         observersStorage.push(card);
         setObservers(prev => [...prev, <CardWithTitle cardUuid={card.cardUUID} title={card.title} draggable={true}
@@ -40,7 +41,7 @@ const ObserverScreen = ({log, className}) => {
     }
 
     function createObservable() {
-        const subject = new Subject(crypto.randomUUID(), `Subject ${observablesStorage.length + 1}`);
+        const subject = new Subject(uuidV4(), `Subject ${observablesStorage.length + 1}`);
         observablesStorage.push(subject);
         setObservables(prev => [...prev,
             <VerticalContainer
