@@ -20,7 +20,7 @@ export class Card extends Observer {
     }
 
     update(message) {
-        this.callback();
+        this.callback(message);
     }
 
     setCallback(f) {

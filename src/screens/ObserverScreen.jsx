@@ -29,10 +29,10 @@ function subjectContainsCard(subjectUUID, cardUUID) {
 const ObserverScreen = ({log, className}) => {
     const [observables, setObservables] = useState([]);
     const [observers, setObservers] = useState([]);
-    const [observersInObservables, setObserversInObservables] = useState({})
 
     function createObserver() {
         const card = new Card(crypto.randomUUID(), `Observer ${observersStorage.length + 1}`);
+        card.setCallback(() => animCard(card));
         observersStorage.push(card);
         setObservers(prev => [...prev, <CardWithTitle cardUuid={card.cardUUID} title={card.title} draggable={true}/>]);
         log(`Created card: ${JSON.stringify(card)}`);
@@ -68,6 +68,13 @@ const ObserverScreen = ({log, className}) => {
                 onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
         });
         setObservables(elms);
+    }
+
+    function animCard(card) {
+        const elm = document.querySelector(`*[data-card-uuid="${card.cardUUID}"]`);
+        elm.animate({background: "red"}, 400)
+            .onfinish = () => elm.animate({background: "green"}, 400)
+            .onfinish = () => elm.animate({background: "yellow"}, 400);
     }
 
     return (
