@@ -13,9 +13,10 @@ class Observer {
 }
 
 export class Card extends Observer {
-    constructor(cardUUID) {
+    constructor(cardUUID, title) {
         super();
         this.cardUUID = cardUUID;
+        this.title = title;
     }
 
     update(message) {
@@ -30,14 +31,16 @@ export class Card extends Observer {
 class Observable {
     addObserver(observer) {}
     removeObserver(observer) {}
+    contain(observer) {}
     notifyAll() {}
 }
 
 export class Subject extends Observable {
-    constructor(subjectUUID, subjectState) {
+    constructor(subjectUUID, containerName) {
         super();
         this.subjectUUID = subjectUUID;
-        this.subjectState = subjectState;
+        this.containerName = containerName;
+        this.subjectState = {};
         this.observers = [];
     }
 
@@ -47,6 +50,10 @@ export class Subject extends Observable {
 
     removeObserver(observer) {
         this.observers = this.observers.filter(obs => observer.cardUUID !== obs.cardUUID);
+    }
+
+    contain(observer) {
+        return !!this.observers.filter(obs => obs.cardUUID === observer.cardUUID)[0];
     }
 
     notifyAll(message) {

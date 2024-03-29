@@ -1,76 +1,86 @@
-import cs from './ObserverScreen.module.css'
+import cs from './ObserverScreen.module.css';
 import HorizontalContainer from "../containers/HorizontalContainer";
 import VerticalContainer from "../containers/VerticalContainer";
 import {useState} from "react";
 import CardWithTitle from "../containers/CardWithTitle";
-import {Message, Card, Subject} from '../utils/helpers'
+import {Card, Subject} from '../utils/helpers';
+
+let observablesStorage = [];
+let observersStorage = [];
+
+function searchCard(cardUUID) {
+    return observersStorage.filter(card => card.cardUUID === cardUUID)[0];
+}
+
+function searchSubject(subjectUUID) {
+    return observablesStorage.filter(subject => subject.subjectUUID === subjectUUID)[0];
+}
+
+function subjectContainsCard(subjectUUID, cardUUID) {
+    const subject = searchSubject(subjectUUID);
+    for (let i = 0; i < subject.observers.length; i++) {
+        if (subject.observers[i].cardUUID === cardUUID) {
+            return true;
+        }
+    }
+    return false;
+}
 
 const ObserverScreen = ({log, className}) => {
-    const [ observablesObjects, setObservablesObjects ] = useState([]);
-    const [ observersObjects, setObserversObjects ] = useState([]);
-    const [ observables, setObservables ] = useState([]);
-    const [ observers, setObservers ] = useState([]);
-    const [ observerGroups, setObserverGroups ] = useState([]);
+    const [observables, setObservables] = useState([]);
+    const [observers, setObservers] = useState([]);
+    const [observersInObservables, setObserversInObservables] = useState({})
 
     function createObserver() {
-        const card = new Card(crypto.randomUUID());
-        setObservers(prev =>
-            [...prev, <CardWithTitle cardUuid={card.cardUUID} title={`Observer ${prev.length + 1}`} draggable={true} />]);
-        setObserversObjects(prev => [...prev, card]);
-        log(`Created observer ${JSON.stringify(card)}.`);
-    }
-
-    function getObserverGroup(groupUUID) {
-        for (let i = 0; i < observerGroups.length; i++) {
-            if (observerGroups[i].uuid === groupUUID) {
-                return observerGroups[i].items;
-            }
-        }
-        return null;
-    }
-
-    function createObserverGroup(groupUUID) {
-        if (getObserverGroup(groupUUID) === null) {
-            setObserverGroups(prev => [...prev, {uuid: groupUUID, items: []}]);
-        }
-    }
-
-    function appendObserverGroup(groupUUID, element) {
-        setObserverGroups(prev => {
-            const group = getObserverGroup(groupUUID);
-            group.items.push(element);
-            return [...prev.filter(el => el.uuid !== group.uuid), group];
-        });
+        const card = new Card(crypto.randomUUID(), `Observer ${observersStorage.length + 1}`);
+        observersStorage.push(card);
+        setObservers(prev => [...prev, <CardWithTitle cardUuid={card.cardUUID} title={card.title} draggable={true}/>]);
+        log(`Created card: ${JSON.stringify(card)}`);
     }
 
     function createObservable() {
-        const subject = new Subject(crypto.randomUUID(), {});
-        createObserverGroup(subject.subjectUUID);
-        setObservables(prev=> [
-            ...prev,
+        const subject = new Subject(crypto.randomUUID(), `Subject ${observablesStorage.length + 1}`);
+        observablesStorage.push(subject);
+        setObservables(prev => [...prev,
             <VerticalContainer
                 containerUUID={subject.subjectUUID}
-                containerName={`Subject ${prev.length + 1}`}
-                width="20vw"
-                height="100%"
-                elms={[]}
-                onDrop={(e) => console.log(e)} />
+                containerName={subject.containerName}
+                width="20svw" height="100%"
+                elements={[]}
+                onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
         ]);
-        setObservablesObjects(prev => [...prev, subject]);
-        log(`Created subject ${JSON.stringify(subject)}`);
+        log(`Created subject: ${JSON.stringify(subject)}`);
+    }
+
+    function dropCard(subjectUUID, card) {
+        if (subjectContainsCard(subjectUUID, card.uuid)) return;
+
+        const subject = searchSubject(subjectUUID);
+        const realCard = searchCard(card.uuid);
+        subject.addObserver(realCard);
+
+        const elms = observablesStorage.map(subject => {
+            return <VerticalContainer
+                containerUUID={subject.subjectUUID}
+                containerName={subject.containerName}
+                width="20svw" height="100%"
+                elements={subject.observers.map(observer => <CardWithTitle cardUuid={observer.cardUUID} title={observer.title} draggable={false} />)}
+                onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
+        });
+        setObservables(elms);
     }
 
     return (
         <div className={cs.screen + (className ? ' ' + className : '')}>
             <HorizontalContainer
                 width="70%"
-                elms={observables} />
+                elements={observables}/>
             <div className={cs.backlogMenu}>
                 <VerticalContainer
                     containerName="Backlog"
                     width="100%"
                     height="90%"
-                    elms={observers} />
+                    elements={observers}/>
                 <div className={cs.backlogButtons}>
                     <button onClick={createObservable}>Observable</button>
                     <button onClick={createObserver}>Observer</button>

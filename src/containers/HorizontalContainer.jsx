@@ -1,10 +1,10 @@
 import cs from './HorizontalContainer.module.css'
 
-const HorizontalContainer = ({width, elms}) => {
+const HorizontalContainer = ({width, elements}) => {
     return (
         <div style={{width: width}} className={cs.container}>
             {
-                elms.map((elm, i) =>
+                elements.map((elm, i) =>
                     <div
                         className={cs.element}
                         key={i}>

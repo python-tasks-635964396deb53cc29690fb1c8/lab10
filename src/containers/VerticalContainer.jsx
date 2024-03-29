@@ -1,6 +1,6 @@
 import cs from './VerticalContainer.module.css'
 
-const VerticalContainer = ({containerName, elms, height, width, onDrop, className, containerUUID}) => {
+const VerticalContainer = ({containerName, elements, height, width, onDrop, className, containerUUID}) => {
     return (
         <div
             data-container-uuid={containerUUID}
@@ -13,7 +13,7 @@ const VerticalContainer = ({containerName, elms, height, width, onDrop, classNam
             </div>
             <div className={cs.elms}>
                 {
-                    elms.map((elm, i) =>
+                    elements.map((elm, i) =>
                         <div
                             key={i}
                             className={cs.elm}>
