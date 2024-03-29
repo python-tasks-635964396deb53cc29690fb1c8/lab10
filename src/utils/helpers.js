@@ -43,7 +43,7 @@ export class Subject extends Observable {
         this.containerName = containerName;
         this.subjectState = {};
         this.observers = [];
-        this.create_date = Date.now();
+        this.createDate = Date.now();
     }
 
     addObserver(observer) {

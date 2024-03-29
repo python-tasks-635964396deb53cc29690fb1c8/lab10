@@ -34,7 +34,8 @@ const ObserverScreen = ({log, className}) => {
         const card = new Card(crypto.randomUUID(), `Observer ${observersStorage.length + 1}`);
         card.setCallback(() => animCard(card));
         observersStorage.push(card);
-        setObservers(prev => [...prev, <CardWithTitle cardUuid={card.cardUUID} title={card.title} draggable={true}/>]);
+        setObservers(prev => [...prev, <CardWithTitle cardUuid={card.cardUUID} title={card.title} draggable={true}
+                                                      onDbClick={(e) => showCardInfo(e, card)}/>]);
         log(`Created card: ${JSON.stringify(card)}`);
     }
 
@@ -65,8 +66,11 @@ const ObserverScreen = ({log, className}) => {
                 containerUUID={subject.subjectUUID}
                 containerName={subject.containerName}
                 width="20svw" height="100%"
-                elements={subject.observers.map(observer => <CardWithTitle cardUuid={observer.cardUUID}
-                                                                           title={observer.title} draggable={false}/>)}
+                elements={subject.observers.map(observer => {
+                    return <CardWithTitle cardUuid={observer.cardUUID}
+                                          title={observer.title} draggable={false}
+                                          onDbClick={(e) => showCardInfo(e, realCard)}/>
+                })}
                 onTopClick={(e) => subjectStateChange(e, subject)}
                 onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
         });
@@ -82,6 +86,14 @@ const ObserverScreen = ({log, className}) => {
             subject.subjectState = newState;
             subject.notifyAll();
         }
+    }
+
+    function showCardInfo(e, card) {
+        let message = `Все известные Subjects для ${card.title}:\n`;
+        card.observables.forEach(subject => {
+            message += `\t- ${subject.containerName}, время работы ${(Date.now() - subject.createDate) / 1000} секунд;\n`;
+        });
+        window.alert(message);
     }
 
     function animCard(card) {
