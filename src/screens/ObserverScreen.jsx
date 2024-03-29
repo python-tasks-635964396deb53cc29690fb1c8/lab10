@@ -47,6 +47,7 @@ const ObserverScreen = ({log, className}) => {
                 containerName={subject.containerName}
                 width="20svw" height="100%"
                 elements={[]}
+                onTopClick={(e) => subjectStateChange(e, subject)}
                 onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
         ]);
         log(`Created subject: ${JSON.stringify(subject)}`);
@@ -64,17 +65,32 @@ const ObserverScreen = ({log, className}) => {
                 containerUUID={subject.subjectUUID}
                 containerName={subject.containerName}
                 width="20svw" height="100%"
-                elements={subject.observers.map(observer => <CardWithTitle cardUuid={observer.cardUUID} title={observer.title} draggable={false} />)}
+                elements={subject.observers.map(observer => <CardWithTitle cardUuid={observer.cardUUID}
+                                                                           title={observer.title} draggable={false}/>)}
+                onTopClick={(e) => subjectStateChange(e, subject)}
                 onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
         });
         setObservables(elms);
     }
 
+    function subjectStateChange(e, subject) {
+        const state = subject.subjectState;
+        const result = window.confirm(`Вот текущее состояние ${subject.containerName}:\n${state}
+                                                \nМожет быть вы хотите изменить его?`);
+        let newState = null;
+        if (result && (newState = window.prompt("Введите новое состояние."))) {
+            subject.subjectState = newState;
+            subject.notifyAll();
+        }
+    }
+
     function animCard(card) {
-        const elm = document.querySelector(`*[data-card-uuid="${card.cardUUID}"]`);
-        elm.animate({background: "red"}, 400)
-            .onfinish = () => elm.animate({background: "green"}, 400)
-            .onfinish = () => elm.animate({background: "yellow"}, 400);
+        const elms = document.querySelectorAll(`*[data-card-uuid="${card.cardUUID}"]`);
+        elms.forEach(elm => {
+            elm.animate({background: "red"}, 400)
+                .onfinish = () => elm.animate({background: "green"}, 400)
+                .onfinish = () => elm.animate({background: "yellow"}, 400);
+        })
     }
 
     return (

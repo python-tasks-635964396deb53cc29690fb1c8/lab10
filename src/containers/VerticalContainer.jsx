@@ -1,6 +1,10 @@
 import cs from './VerticalContainer.module.css'
 
-const VerticalContainer = ({containerName, elements, height, width, onDrop, className, containerUUID}) => {
+const VerticalContainer = ({containerName, elements, height, width, onDrop, className, containerUUID, onTopClick}) => {
+    function topClick() {
+        onTopClick && onTopClick();
+    }
+
     return (
         <div
             data-container-uuid={containerUUID}
@@ -8,7 +12,7 @@ const VerticalContainer = ({containerName, elements, height, width, onDrop, clas
             onDrop={onDrop}
             style={{height: height, width: width}}
             className={cs.container + (className ? ' ' + className : '')}>
-            <div className={cs.title}>
+            <div style={onTopClick ? {cursor: "pointer"} : {}} className={cs.title} onClick={topClick}>
                 <span>{containerName}</span>
             </div>
             <div className={cs.elms}>

@@ -17,6 +17,7 @@ export class Card extends Observer {
         super();
         this.cardUUID = cardUUID;
         this.title = title;
+        this.observables = []
     }
 
     update(message) {
@@ -42,9 +43,11 @@ export class Subject extends Observable {
         this.containerName = containerName;
         this.subjectState = {};
         this.observers = [];
+        this.create_date = Date.now();
     }
 
     addObserver(observer) {
+        observer.observables.push(this);
         this.observers.push(observer);
     }
 
