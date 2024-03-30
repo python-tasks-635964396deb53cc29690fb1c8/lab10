@@ -17,7 +17,7 @@ export class Card extends Observer {
         super();
         this.cardUUID = cardUUID;
         this.title = title;
-        this.observables = []
+        this.observable = null;
     }
 
     update(message) {
@@ -47,11 +47,12 @@ export class Subject extends Observable {
     }
 
     addObserver(observer) {
-        observer.observables.push(this);
+        observer.observable = this;
         this.observers.push(observer);
     }
 
     removeObserver(observer) {
+        observer.observable = null;
         this.observers = this.observers.filter(obs => observer.cardUUID !== obs.cardUUID);
     }
 

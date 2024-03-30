@@ -56,26 +56,13 @@ const ObserverScreen = ({log, className}) => {
     }
 
     function dropCard(subjectUUID, card) {
-        if (subjectContainsCard(subjectUUID, card.uuid)) return;
+        const realCard = searchCard(card.uuid);
+        if (subjectContainsCard(subjectUUID, card.uuid) || realCard.observable) return;
 
         const subject = searchSubject(subjectUUID);
-        const realCard = searchCard(card.uuid);
         subject.addObserver(realCard);
 
-        const elms = observablesStorage.map(subject => {
-            return <VerticalContainer
-                containerUUID={subject.subjectUUID}
-                containerName={subject.containerName}
-                width="20svw" height="100%"
-                elements={subject.observers.map(observer => {
-                    return <CardWithTitle cardUuid={observer.cardUUID}
-                                          title={observer.title} draggable={false}
-                                          onDbClick={(e) => showCardInfo(e, realCard)}/>
-                })}
-                onTopClick={(e) => subjectStateChange(e, subject)}
-                onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
-        });
-        setObservables(elms);
+        redrawObservablesWithCard(realCard);
     }
 
     function subjectStateChange(e, subject) {
@@ -89,11 +76,35 @@ const ObserverScreen = ({log, className}) => {
         }
     }
 
+    function deleteCard(e, card) {
+        if (!card.observable) return;
+
+        card.observable.removeObserver(card);
+        redrawObservablesWithCard(card);
+    }
+
+    function redrawObservablesWithCard(card) {
+        const elms = observablesStorage.map(subject => {
+            return <VerticalContainer
+                containerUUID={subject.subjectUUID}
+                containerName={subject.containerName}
+                width="20svw" height="100%"
+                elements={subject.observers.map(observer => {
+                    return <CardWithTitle cardUuid={observer.cardUUID}
+                                          title={observer.title} draggable={false}
+                                          onDbClick={(e) => showCardInfo(e, card)}
+                                          onRightClick={(e) => deleteCard(e, card)}/>
+                })}
+                onTopClick={(e) => subjectStateChange(e, subject)}
+                onDrop={(e) => dropCard(e.currentTarget.getAttribute("data-container-uuid"), JSON.parse(e.dataTransfer.getData("application/json")))}/>
+        });
+        setObservables(elms);
+    }
+
     function showCardInfo(e, card) {
         let message = `Все известные Subjects для ${card.title}:\n`;
-        card.observables.forEach(subject => {
-            message += `\t- ${subject.containerName}, время работы ${(Date.now() - subject.createDate) / 1000} секунд;\n`;
-        });
+        const subject = card.observable;
+        message += `\t- ${subject.containerName}, время работы ${(Date.now() - subject.createDate) / 1000} секунд;`;
         window.alert(message);
     }
 
